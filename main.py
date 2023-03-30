@@ -1,9 +1,17 @@
 import requests
+import random
+import os
 import json
 import ffmpeg
 from api_key import API_KEY
 
 VOICE_ID = "21m00Tcm4TlvDq8ikWAM"
+
+
+
+def get_gameplay():
+    gameplay = os.listdir("./gameplay")
+    return "gameplay/" + gameplay[random.randint(0, len(gameplay) - 1)]
 
 def postname_comment(subreddit, posts):
     postarray = []
@@ -53,12 +61,15 @@ def combine_video_audio(video, audio, outputname):
 def main():
     posts = postname_comment("askreddit", 3)
     for i, name in enumerate(posts):
+        gameplayfile = get_gameplay()
+        print(gameplayfile)
         with open("audio.mp3", "wb") as f:
             f.write(text_to_speech(name))
         input_audio = ffmpeg.input("./audio.mp3")
 
-        audiolen = ffmpeg.probe("audio.mp3")['format']['duration']
-        input_gameplay = ffmpeg.input("./gameplaynew.mp4") 
+        audiolen = ffmpeg.probe("./audio.mp3")['format']['duration']
+
+        input_gameplay = ffmpeg.input(f"./{gameplayfile}") 
         listname = name.split(" ")
         print(audiolen)
         for j, text in enumerate(listname):
